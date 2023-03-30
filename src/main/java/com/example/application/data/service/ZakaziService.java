@@ -24,8 +24,8 @@ public class ZakaziService {
         return repository.save(entity);
     }
 
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public void delete(Zakazi zakazi) {
+        repository.delete(zakazi);
     }
 
     public Page<Zakazi> list(Pageable pageable) {

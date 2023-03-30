@@ -32,7 +32,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 @PageTitle("заказы")
 @Route(value = "zakazi/:zakaziID?/:action?(edit)")
 @RouteAlias(value = "")
-public class ЗаказыView extends Div implements BeforeEnterObserver {
+public class ZakaziView extends Div implements BeforeEnterObserver {
 
     private final String ZAKAZI_ID = "zakaziID";
     private final String ZAKAZI_EDIT_ROUTE_TEMPLATE = "zakazi/%s/edit";
@@ -46,17 +46,18 @@ public class ЗаказыView extends Div implements BeforeEnterObserver {
     private TextField raboti;
     private DateTimePicker date;
     private TextField stadia;
+    private TextField primechanie;
 
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
-
+    private final Button delete = new Button("Delete");
     private final BeanValidationBinder<Zakazi> binder;
 
     private Zakazi zakazi;
 
     private final ZakaziService zakaziService;
 
-    public ЗаказыView(ZakaziService zakaziService) {
+    public ZakaziView(ZakaziService zakaziService) {
         this.zakaziService = zakaziService;
         addClassNames("заказы-view");
 
@@ -76,6 +77,7 @@ public class ЗаказыView extends Div implements BeforeEnterObserver {
         grid.addColumn("raboti").setAutoWidth(true).setHeader("Список работ");
         grid.addColumn("date").setAutoWidth(true).setHeader("Дата заказа");
         grid.addColumn("stadia").setAutoWidth(true).setHeader("Стадия выполнения");
+        grid.addColumn("primechanie").setAutoWidth(true).setHeader("Примечание");
         grid.setItems(query -> zakaziService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
@@ -87,7 +89,7 @@ public class ЗаказыView extends Div implements BeforeEnterObserver {
                 UI.getCurrent().navigate(String.format(ZAKAZI_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
             } else {
                 clearForm();
-                UI.getCurrent().navigate(ЗаказыView.class);
+                UI.getCurrent().navigate(ZakaziView.class);
             }
         });
 
@@ -112,8 +114,8 @@ public class ЗаказыView extends Div implements BeforeEnterObserver {
                 zakaziService.update(this.zakazi);
                 clearForm();
                 refreshGrid();
-                Notification.show("Data updated");
-                UI.getCurrent().navigate(ЗаказыView.class);
+                Notification.show("Заказ обновлен");
+                UI.getCurrent().navigate(ZakaziView.class);
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
                         "Error updating the data. Somebody else has updated the record while you were making changes.");
@@ -122,6 +124,14 @@ public class ЗаказыView extends Div implements BeforeEnterObserver {
             } catch (ValidationException validationException) {
                 Notification.show("Failed to update the data. Check again that all values are valid");
             }
+        });
+        delete.addClickListener(e -> {
+            if (this.zakazi == null){Notification.show("Заказ не выбран");}
+            zakaziService.delete(this.zakazi);
+            clearForm();
+            refreshGrid();
+            Notification.show("заказ удален");
+
         });
     }
 
@@ -138,7 +148,7 @@ public class ЗаказыView extends Div implements BeforeEnterObserver {
                 // when a row is selected but the data is no longer available,
                 // refresh grid
                 refreshGrid();
-                event.forwardTo(ЗаказыView.class);
+                event.forwardTo(ZakaziView.class);
             }
         }
     }
@@ -152,15 +162,16 @@ public class ЗаказыView extends Div implements BeforeEnterObserver {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        name = new TextField("Name");
-        deadManSurname = new TextField("Dead Man Surname");
-        uchastok = new TextField("Uchastok");
-        phone = new TextField("Phone");
-        raboti = new TextField("Raboti");
-        date = new DateTimePicker("Date");
+        name = new TextField("Имя заказчика");
+        deadManSurname = new TextField("Фамилия умершего");
+        uchastok = new TextField("Участок");
+        phone = new TextField("Номер телефона");
+        raboti = new TextField("Список работ");
+        date = new DateTimePicker("Дата заказа");
         date.setStep(Duration.ofSeconds(1));
-        stadia = new TextField("Stadia");
-        formLayout.add(name, deadManSurname, uchastok, phone, raboti, date, stadia);
+        stadia = new TextField("Стадия выполнения");
+        primechanie = new TextField("Примечание");
+        formLayout.add(name, deadManSurname, uchastok, phone, raboti, date, stadia, primechanie);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -173,7 +184,8 @@ public class ЗаказыView extends Div implements BeforeEnterObserver {
         buttonLayout.setClassName("button-layout");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel);
+        delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        buttonLayout.add(save, cancel, delete);
         editorLayoutDiv.add(buttonLayout);
     }
 

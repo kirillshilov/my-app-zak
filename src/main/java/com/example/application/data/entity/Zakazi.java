@@ -2,6 +2,7 @@ package com.example.application.data.entity;
 
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 public class Zakazi extends AbstractEntity {
@@ -13,6 +14,7 @@ public class Zakazi extends AbstractEntity {
     private String raboti;
     private LocalDateTime date;
     private String stadia;
+    private String primechanie;
 
     public String getName() {
         return name;
@@ -57,4 +59,39 @@ public class Zakazi extends AbstractEntity {
         this.stadia = stadia;
     }
 
+    public String getPrimechanie() {
+        return primechanie;
+    }
+
+    public void setPrimechanie(String primechanie) {
+        this.primechanie = primechanie;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Zakazi zakazi = (Zakazi) o;
+        return Objects.equals(name, zakazi.name) && Objects.equals(deadManSurname, zakazi.deadManSurname) && Objects.equals(uchastok, zakazi.uchastok) && Objects.equals(phone, zakazi.phone) && Objects.equals(raboti, zakazi.raboti) && Objects.equals(date, zakazi.date) && Objects.equals(stadia, zakazi.stadia) && Objects.equals(primechanie, zakazi.primechanie);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, deadManSurname, uchastok, phone, raboti, date, stadia, primechanie);
+    }
+
+    @Override
+    public String toString() {
+        return "Zakazi{" +
+                "name='" + name + '\'' +
+                ", deadManSurname='" + deadManSurname + '\'' +
+                ", uchastok='" + uchastok + '\'' +
+                ", phone='" + phone + '\'' +
+                ", raboti='" + raboti + '\'' +
+                ", date=" + date +
+                ", stadia='" + stadia + '\'' +
+                ", primechanie='" + primechanie + '\'' +
+                '}';
+    }
 }
