@@ -69,13 +69,13 @@ public class ЗаказыView extends Div implements BeforeEnterObserver {
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("name").setAutoWidth(true);
-        grid.addColumn("deadManSurname").setAutoWidth(true);
-        grid.addColumn("uchastok").setAutoWidth(true);
-        grid.addColumn("phone").setAutoWidth(true);
-        grid.addColumn("raboti").setAutoWidth(true);
-        grid.addColumn("date").setAutoWidth(true);
-        grid.addColumn("stadia").setAutoWidth(true);
+        grid.addColumn("name").setAutoWidth(true).setHeader("Имя заказчика");
+        grid.addColumn("deadManSurname").setAutoWidth(true).setHeader("Фамилия умершего");
+        grid.addColumn("uchastok").setAutoWidth(true).setHeader("Участок");
+        grid.addColumn("phone").setAutoWidth(true).setHeader("Номер телефона");
+        grid.addColumn("raboti").setAutoWidth(true).setHeader("Список работ");
+        grid.addColumn("date").setAutoWidth(true).setHeader("Дата заказа");
+        grid.addColumn("stadia").setAutoWidth(true).setHeader("Стадия выполнения");
         grid.setItems(query -> zakaziService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
